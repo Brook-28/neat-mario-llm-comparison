@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Screen recordings
+*.mp4
+*.avi
+
+# Game ROMs
+*.nes
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini

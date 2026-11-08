@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from nes_py.wrappers import JoypadSpace
@@ -9,7 +10,7 @@ state, info = env.reset()
 
 SCALE = 3
 pygame.init()
-window = pygame.display.set_mode((256 * SCALE, 240 * SCALE))
+window = pygame.display.set_mode((256 * SCALE + 16 * 20, 240 * SCALE))
 pygame.display.set_caption("Super Mario Bros")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 36)
@@ -47,6 +48,24 @@ while running:
     picture = pygame.surfarray.make_surface(state.swapaxes(0, 1))
     picture = pygame.transform.scale(picture, (256 * SCALE, 240 * SCALE))
     window.blit(picture, (0, 0))
+    
+        # Render the small 15x16 grid representation
+    small = state.mean(axis=2) / 255.0
+    small = small.reshape(15, 16, 16, 16).mean(axis=(1, 3))
+
+    cell_size = 20
+    grid_x = 256 * SCALE
+
+    for row in range(15):   
+        for col in range(16):
+            shade = int(small[row, col] * 255)
+            color = (shade, shade, shade)
+            pygame.draw.rect(
+                window,
+                color,
+                (grid_x + col * cell_size, row * cell_size, cell_size, cell_size)
+                ) 
+
     elapsed_seconds = (pygame.time.get_ticks() - run_start_time) / 1000
     label = font.render(f"x = {info['x_pos']} Time: {elapsed_seconds:.2f}s", True, (255, 255, 255))
     window.blit(label, (10, 240 * SCALE - 40))
